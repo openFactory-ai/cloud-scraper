@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "data-scraper"
+version = "0.1.0"
+description = "Cloud data export GUI — download your personal data from Google, Microsoft, and Apple"
+requires-python = ">=3.11"
+dependencies = [
+    "PyGObject>=3.46",
+    "google-api-python-client>=2.100",
+    "google-auth-oauthlib>=1.1",
+    "google-auth-httplib2>=0.2",
+    "msal>=1.24",
+    "msgraph-sdk>=1.0",
+    "requests>=2.31",
+    "keyring>=24.0",
+    "icalendar>=5.0",
+]
+
+[project.scripts]
+data-scraper = "data_scraper.__main__:main"
+
+[tool.setuptools.packages.find]
+include = ["data_scraper*"]
