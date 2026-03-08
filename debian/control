@@ -1,0 +1,15 @@
+Source: data-scraper
+Section: utils
+Priority: optional
+Maintainer: Elster Drones <dev@elster.tech>
+Build-Depends: debhelper-compat (= 13), python3, python3-venv, python3-pip
+Standards-Version: 4.6.0
+Homepage: https://github.com/elster-drones/data-scraper
+
+Package: data-scraper
+Architecture: all
+Depends: ${misc:Depends}, python3 (>= 3.11), python3-venv, python3-gi, gir1.2-gtk-4.0, gir1.2-adw-1
+Description: Cloud data export GUI
+ Download your personal data from Google, Microsoft, and Apple
+ using official export APIs. Supports email, contacts, calendar,
+ drive/files, and photos with a GTK4/libadwaita interface.

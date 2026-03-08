@@ -1,0 +1,7 @@
+data-scraper (0.1.0) stable; urgency=medium
+
+  * Initial release
+  * Cloud data export GUI for Google, Microsoft, and Apple
+  * GTK4/libadwaita interface with provider cards
+
+ -- Elster Drones <dev@elster.tech>  Sat, 08 Mar 2026 12:00:00 +0000

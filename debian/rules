@@ -1,0 +1,27 @@
+#!/usr/bin/make -f
+
+export DH_VERBOSE = 1
+
+%:
+	dh $@
+
+override_dh_auto_build:
+	python3 -m venv --system-site-packages debian/venv
+	debian/venv/bin/pip install --no-index --find-links=vendor -r requirements.txt
+
+override_dh_auto_install:
+	install -d $(CURDIR)/debian/data-scraper/opt/data-scraper
+	cp -r data_scraper $(CURDIR)/debian/data-scraper/opt/data-scraper/
+	cp -r resources $(CURDIR)/debian/data-scraper/opt/data-scraper/
+	cp requirements.txt $(CURDIR)/debian/data-scraper/opt/data-scraper/
+	cp -r debian/venv $(CURDIR)/debian/data-scraper/opt/data-scraper/
+
+	# Desktop entry + launcher script
+	install -d $(CURDIR)/debian/data-scraper/usr/share/applications
+	install -m 644 debian/data-scraper.desktop $(CURDIR)/debian/data-scraper/usr/share/applications/
+	install -d $(CURDIR)/debian/data-scraper/usr/bin
+	install -m 755 debian/data-scraper.sh $(CURDIR)/debian/data-scraper/usr/bin/data-scraper
+
+override_dh_auto_clean:
+	rm -rf debian/venv
+	dh_auto_clean

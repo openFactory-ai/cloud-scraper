@@ -1,0 +1,8 @@
+google-api-python-client>=2.100
+google-auth-oauthlib>=1.1
+google-auth-httplib2>=0.2
+msal>=1.24
+msgraph-sdk>=1.0
+requests>=2.31
+keyring>=24.0
+icalendar>=5.0
