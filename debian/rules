@@ -10,17 +10,17 @@ override_dh_auto_build:
 	debian/venv/bin/pip install --no-index --find-links=vendor -r requirements.txt
 
 override_dh_auto_install:
-	install -d $(CURDIR)/debian/data-scraper/opt/data-scraper
-	cp -r data_scraper $(CURDIR)/debian/data-scraper/opt/data-scraper/
-	cp -r resources $(CURDIR)/debian/data-scraper/opt/data-scraper/
-	cp requirements.txt $(CURDIR)/debian/data-scraper/opt/data-scraper/
-	cp -r debian/venv $(CURDIR)/debian/data-scraper/opt/data-scraper/
+	install -d $(CURDIR)/debian/cloud-scraper/opt/cloud-scraper
+	cp -r data_scraper $(CURDIR)/debian/cloud-scraper/opt/cloud-scraper/
+	cp -r resources $(CURDIR)/debian/cloud-scraper/opt/cloud-scraper/
+	cp requirements.txt $(CURDIR)/debian/cloud-scraper/opt/cloud-scraper/
+	cp -r debian/venv $(CURDIR)/debian/cloud-scraper/opt/cloud-scraper/
 
 	# Desktop entry + launcher script
-	install -d $(CURDIR)/debian/data-scraper/usr/share/applications
-	install -m 644 debian/data-scraper.desktop $(CURDIR)/debian/data-scraper/usr/share/applications/
-	install -d $(CURDIR)/debian/data-scraper/usr/bin
-	install -m 755 debian/data-scraper.sh $(CURDIR)/debian/data-scraper/usr/bin/data-scraper
+	install -d $(CURDIR)/debian/cloud-scraper/usr/share/applications
+	install -m 644 debian/cloud-scraper.desktop $(CURDIR)/debian/cloud-scraper/usr/share/applications/
+	install -d $(CURDIR)/debian/cloud-scraper/usr/bin
+	install -m 755 debian/cloud-scraper.sh $(CURDIR)/debian/cloud-scraper/usr/bin/cloud-scraper
 
 override_dh_auto_clean:
 	rm -rf debian/venv

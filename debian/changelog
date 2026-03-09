@@ -1,4 +1,4 @@
-data-scraper (0.1.0) stable; urgency=medium
+cloud-scraper (0.1.0) stable; urgency=medium
 
   * Initial release
   * Cloud data export GUI for Google, Microsoft, and Apple

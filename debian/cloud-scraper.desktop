@@ -1,7 +1,7 @@
 [Desktop Entry]
-Name=Data Scraper
+Name=Cloud Scraper
 Comment=Download your personal data from cloud providers
-Exec=/usr/bin/data-scraper
+Exec=/usr/bin/cloud-scraper
 Icon=preferences-desktop-online-accounts
 Terminal=false
 Type=Application

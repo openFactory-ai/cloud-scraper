@@ -1,12 +1,12 @@
-Source: data-scraper
+Source: cloud-scraper
 Section: utils
 Priority: optional
 Maintainer: Elster Drones <dev@elster.tech>
 Build-Depends: debhelper-compat (= 13), python3, python3-venv, python3-pip
 Standards-Version: 4.6.0
-Homepage: https://github.com/elster-drones/data-scraper
+Homepage: https://github.com/elster-drones/cloud-scraper
 
-Package: data-scraper
+Package: cloud-scraper
 Architecture: all
 Depends: ${misc:Depends}, python3 (>= 3.9), python3-venv, python3-gi, gir1.2-gtk-4.0, gir1.2-adw-1
 Description: Cloud data export GUI
