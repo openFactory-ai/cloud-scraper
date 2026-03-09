@@ -1,4 +1,4 @@
-# Data Scraper
+# Cloud Scraper
 
 Cloud data export GUI — download your personal data from Google, Microsoft, and Apple.
 
@@ -23,7 +23,7 @@ pip install google-api-python-client google-auth-oauthlib msal msgraph-sdk reque
 ## Usage
 
 ```bash
-cd ~/Documents/vyatta/data-scraper
+cd ~/Documents/vyatta/cloud-scraper
 python -m data_scraper
 ```
 
