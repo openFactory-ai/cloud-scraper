@@ -86,22 +86,7 @@ class DataScraperWindow(Adw.ApplicationWindow):
 
         # Header bar with icon + title
         header = Adw.HeaderBar()
-        title_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
-        title_box.set_valign(Gtk.Align.CENTER)
-
-        icon_path = Path("/opt/openfactory/cloud-scraper/resources/icons/cloud-scraper.svg")
-        if not icon_path.exists():
-            icon_path = Path(__file__).parent.parent / "resources" / "icons" / "cloud-scraper.svg"
-        if icon_path.exists():
-            icon = Gtk.Image.new_from_file(str(icon_path))
-            icon.set_pixel_size(20)
-            title_box.append(icon)
-
-        title_label = Gtk.Label(label="Cloud Scraper")
-        title_label.add_css_class("heading")
-        title_box.append(title_label)
-
-        header.set_title_widget(title_box)
+        header.set_title_widget(Gtk.Label())
         toolbar_view.add_top_bar(header)
 
         # Scrollable content
@@ -117,6 +102,32 @@ class DataScraperWindow(Adw.ApplicationWindow):
             margin_bottom=32,
         )
         scroll.set_child(content)
+
+        # -- App header: logo in corner + title + subtitle --
+        app_header = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=12)
+        app_header.set_valign(Gtk.Align.CENTER)
+        content.append(app_header)
+
+        icon_path = Path("/opt/openfactory/cloud-scraper/resources/icons/cloud-scraper.svg")
+        if not icon_path.exists():
+            icon_path = Path(__file__).parent.parent / "resources" / "icons" / "cloud-scraper.svg"
+        if icon_path.exists():
+            icon = Gtk.Image.new_from_file(str(icon_path))
+            icon.set_pixel_size(32)
+            app_header.append(icon)
+
+        header_text = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=2)
+        header_text.set_valign(Gtk.Align.CENTER)
+        app_header.append(header_text)
+
+        title_label = Gtk.Label(label="Cloud Scraper", xalign=0)
+        title_label.add_css_class("title-3")
+        header_text.append(title_label)
+
+        subtitle_label = Gtk.Label(label="Export your data from cloud services", xalign=0)
+        subtitle_label.add_css_class("dim-label")
+        subtitle_label.add_css_class("caption")
+        header_text.append(subtitle_label)
 
         # -- Providers section --
         providers_label = Gtk.Label(label="ACCOUNTS")
