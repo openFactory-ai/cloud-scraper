@@ -13,9 +13,9 @@ SCOPES = ["Mail.Read", "Contacts.Read", "Calendars.Read", "Files.Read", "User.Re
 REDIRECT_PORT = 8086
 REDIRECT_URI = f"http://localhost:{REDIRECT_PORT}"
 
-# Users must register an app at https://portal.azure.com
-# and put the client ID in ~/.config/data-scraper/microsoft.json
-DEFAULT_CLIENT_ID = ""
+# Embedded Azure AD app registration — public client (no secret needed for
+# desktop/mobile apps using device code flow)
+_EMBEDDED_CLIENT_ID = ""
 
 
 class MicrosoftProvider(BaseProvider):
@@ -34,24 +34,30 @@ class MicrosoftProvider(BaseProvider):
         self._client_id = self._load_client_id()
 
     def _load_client_id(self) -> str:
+        """Load client ID — file override, or embedded default."""
         config_path = Path.home() / ".config" / "data-scraper" / "microsoft.json"
         if config_path.exists():
-            data = json.loads(config_path.read_text())
-            return data.get("client_id", DEFAULT_CLIENT_ID)
-        return DEFAULT_CLIENT_ID
+            try:
+                data = json.loads(config_path.read_text())
+                cid = data.get("client_id", "")
+                if cid:
+                    return cid
+            except Exception as e:
+                log.warning("Failed to load %s: %s", config_path, e)
+        return _EMBEDDED_CLIENT_ID
 
     def authenticate(self) -> bool:
+        self.last_error = None
         try:
             import msal
         except ImportError:
-            log.error("msal not installed")
+            self.last_error = "msal not installed"
+            log.error(self.last_error)
             return False
 
         if not self._client_id:
-            log.error(
-                "No Microsoft client ID configured. "
-                "Create ~/.config/data-scraper/microsoft.json with {\"client_id\": \"...\"}"
-            )
+            self.last_error = "No Microsoft client ID configured"
+            log.error(self.last_error)
             return False
 
         # Try cached token
@@ -71,7 +77,8 @@ class MicrosoftProvider(BaseProvider):
 
         flow = app.initiate_device_flow(scopes=[f"https://graph.microsoft.com/{s}" for s in SCOPES])
         if "user_code" not in flow:
-            log.error("Failed to initiate device flow: %s", flow.get("error_description"))
+            self.last_error = f"Device flow failed: {flow.get('error_description', 'unknown')}"
+            log.error(self.last_error)
             return False
 
         log.info("Microsoft auth: %s", flow["message"])
@@ -81,7 +88,8 @@ class MicrosoftProvider(BaseProvider):
 
         result = app.acquire_token_by_device_flow(flow)
         if "access_token" not in result:
-            log.error("Auth failed: %s", result.get("error_description"))
+            self.last_error = f"Auth failed: {result.get('error_description', 'unknown')}"
+            log.error(self.last_error)
             return False
 
         self._access_token = result["access_token"]

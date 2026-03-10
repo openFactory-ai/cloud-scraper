@@ -24,6 +24,18 @@ SCOPES = [
 REDIRECT_PORT = 8085
 REDIRECT_URI = f"http://localhost:{REDIRECT_PORT}"
 
+# Embedded OAuth client config — Desktop app type (client secret is not confidential
+# for installed/desktop apps per Google's documentation)
+_EMBEDDED_CLIENT_CONFIG = {
+    "installed": {
+        "client_id": "",
+        "client_secret": "",
+        "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+        "token_uri": "https://oauth2.googleapis.com/token",
+        "redirect_uris": ["http://localhost"],
+    }
+}
+
 
 class GoogleProvider(BaseProvider):
     name = "Google"
@@ -97,21 +109,25 @@ class GoogleProvider(BaseProvider):
         return True
 
     def _get_client_config(self) -> dict | None:
-        """Load OAuth client config from file or return a placeholder."""
+        """Load OAuth client config — embedded, or override from file."""
+        # Allow user override via config file
         config_paths = [
+            Path.home() / ".config" / "data-scraper" / "google-credentials.json",
             Path("credentials.json"),
             Path("client_secret.json"),
-            Path.home() / ".config" / "data-scraper" / "google-credentials.json",
         ]
         for p in config_paths:
             if p.exists():
-                return json.loads(p.read_text())
+                try:
+                    return json.loads(p.read_text())
+                except Exception as e:
+                    log.warning("Failed to load %s: %s", p, e)
 
-        # Return a placeholder — user must provide their own client ID
-        log.warning(
-            "No Google OAuth credentials found. "
-            "Place credentials.json in the app directory or ~/.config/data-scraper/"
-        )
+        # Use embedded config
+        if _EMBEDDED_CLIENT_CONFIG["installed"]["client_id"]:
+            return _EMBEDDED_CLIENT_CONFIG
+
+        log.error("No Google OAuth client ID configured")
         return None
 
     def _save_creds(self):

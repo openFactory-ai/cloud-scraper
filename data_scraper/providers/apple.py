@@ -46,6 +46,7 @@ class AppleProvider(BaseProvider):
         Since Apple doesn't provide OAuth, this requires the user to generate
         an app-specific password at https://appleid.apple.com/account/manage
         """
+        self.last_error = None
         # Try stored credentials
         token_data = load_token("apple")
         if token_data:
@@ -56,13 +57,17 @@ class AppleProvider(BaseProvider):
                     self._authenticated = True
                     self._user_email = self._apple_id
                     return True
+                self.last_error = "iCloud login failed — check your app-specific password"
 
         # Need credentials from UI — they'll be set via set_credentials()
-        log.info("Apple authentication requires Apple ID and app-specific password")
+        if not self.last_error:
+            self.last_error = "Enter your Apple ID and app-specific password"
+        log.info("Apple auth: %s", self.last_error)
         return False
 
     def set_credentials(self, apple_id: str, password: str) -> bool:
         """Set Apple ID credentials and attempt login."""
+        self.last_error = None
         self._apple_id = apple_id
         self._password = password
 
@@ -71,6 +76,8 @@ class AppleProvider(BaseProvider):
             self._authenticated = True
             self._user_email = apple_id
             return True
+        if not self.last_error:
+            self.last_error = "iCloud login failed"
         return False
 
     def _icloud_login(self) -> bool:
@@ -93,7 +100,8 @@ class AppleProvider(BaseProvider):
                 timeout=30,
             )
             if r.status_code not in (200, 409):
-                log.error("iCloud auth failed: %s", r.status_code)
+                self.last_error = f"iCloud auth failed (HTTP {r.status_code})"
+                log.error(self.last_error)
                 return False
 
             # Get webservice URLs
@@ -109,7 +117,8 @@ class AppleProvider(BaseProvider):
                 return True
 
         except Exception as e:
-            log.error("iCloud login failed: %s", e)
+            self.last_error = f"iCloud login failed: {e}"
+            log.error(self.last_error)
         return False
 
     def export_data(
