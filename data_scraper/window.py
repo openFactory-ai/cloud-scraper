@@ -124,8 +124,8 @@ class DataScraperWindow(Adw.ApplicationWindow):
             icon_path = Path(__file__).parent.parent / "resources" / "icons" / "cloud-scraper.svg"
         if icon_path.exists():
             icon = Gtk.Image.new_from_file(str(icon_path))
-            icon.set_pixel_size(64)
-            icon.set_margin_bottom(8)
+            icon.set_pixel_size(36)
+            icon.set_margin_bottom(4)
             hero.append(icon)
 
         title = Gtk.Label(label="Cloud Scraper")
