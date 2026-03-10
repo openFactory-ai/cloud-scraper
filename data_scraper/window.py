@@ -216,7 +216,12 @@ class DataScraperWindow(Adw.ApplicationWindow):
         card_widget.set_sensitive(False)
 
         def auth_thread():
-            success = provider.authenticate()
+            try:
+                success = provider.authenticate()
+            except Exception as e:
+                log.error("Auth thread error for %s: %s", provider.name, e)
+                provider.last_error = str(e)
+                success = False
             GLib.idle_add(self._on_auth_done, provider, card, success)
 
         threading.Thread(target=auth_thread, daemon=True).start()

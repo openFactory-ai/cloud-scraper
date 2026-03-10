@@ -100,10 +100,15 @@ class GoogleProvider(BaseProvider):
                 port=REDIRECT_PORT,
                 prompt="consent",
                 open_browser=True,
+                timeout_seconds=180,
             )
         except Exception as e:
             self.last_error = f"OAuth flow failed: {e}"
             log.error(self.last_error)
+            return False
+
+        if not self._creds:
+            self.last_error = "Authentication was cancelled or timed out"
             return False
 
         self._save_creds()
