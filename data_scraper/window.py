@@ -24,15 +24,6 @@ _CSS = """
 .cloud-scraper-window {
     background: @window_bg_color;
 }
-.hero-title {
-    font-size: 22px;
-    font-weight: 800;
-    letter-spacing: -0.3px;
-}
-.hero-subtitle {
-    font-size: 14px;
-    color: @dim_label_color;
-}
 .export-btn {
     padding: 12px 48px;
     font-size: 15px;
@@ -93,9 +84,24 @@ class DataScraperWindow(Adw.ApplicationWindow):
         toolbar_view = Adw.ToolbarView()
         self._toast_overlay.set_child(toolbar_view)
 
-        # Header bar — clean, minimal
+        # Header bar with icon + title
         header = Adw.HeaderBar()
-        header.set_title_widget(Gtk.Label())  # empty — title is in the hero
+        title_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
+        title_box.set_valign(Gtk.Align.CENTER)
+
+        icon_path = Path("/opt/openfactory/cloud-scraper/resources/icons/cloud-scraper.svg")
+        if not icon_path.exists():
+            icon_path = Path(__file__).parent.parent / "resources" / "icons" / "cloud-scraper.svg"
+        if icon_path.exists():
+            icon = Gtk.Image.new_from_file(str(icon_path))
+            icon.set_pixel_size(20)
+            title_box.append(icon)
+
+        title_label = Gtk.Label(label="Cloud Scraper")
+        title_label.add_css_class("heading")
+        title_box.append(title_label)
+
+        header.set_title_widget(title_box)
         toolbar_view.add_top_bar(header)
 
         # Scrollable content
@@ -107,34 +113,10 @@ class DataScraperWindow(Adw.ApplicationWindow):
             spacing=24,
             margin_start=28,
             margin_end=28,
-            margin_top=8,
+            margin_top=16,
             margin_bottom=32,
         )
         scroll.set_child(content)
-
-        # -- Hero section --
-        hero = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
-        hero.set_halign(Gtk.Align.CENTER)
-        content.append(hero)
-
-        # App icon
-        icon_path = Path("/opt/openfactory/cloud-scraper/resources/icons/cloud-scraper.svg")
-        if not icon_path.exists():
-            # Dev fallback
-            icon_path = Path(__file__).parent.parent / "resources" / "icons" / "cloud-scraper.svg"
-        if icon_path.exists():
-            icon = Gtk.Image.new_from_file(str(icon_path))
-            icon.set_pixel_size(36)
-            icon.set_margin_bottom(4)
-            hero.append(icon)
-
-        title = Gtk.Label(label="Cloud Scraper")
-        title.add_css_class("hero-title")
-        hero.append(title)
-
-        subtitle = Gtk.Label(label="Export your data from cloud services")
-        subtitle.add_css_class("hero-subtitle")
-        hero.append(subtitle)
 
         # -- Providers section --
         providers_label = Gtk.Label(label="ACCOUNTS")
