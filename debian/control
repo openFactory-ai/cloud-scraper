@@ -1,10 +1,10 @@
 Source: cloud-scraper
 Section: utils
 Priority: optional
-Maintainer: Elster Drones <dev@elster.tech>
+Maintainer: OpenFactory <dev@openfactory.tech>
 Build-Depends: debhelper-compat (= 13), python3, python3-venv, python3-pip
 Standards-Version: 4.6.0
-Homepage: https://github.com/elster-drones/cloud-scraper
+Homepage: https://github.com/openFactory-ai/cloud-scraper
 
 Package: cloud-scraper
 Architecture: all
