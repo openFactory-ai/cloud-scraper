@@ -1,0 +1,17 @@
+#!/bin/bash
+set -e
+
+case "$1" in
+    configure)
+        echo "Creating Python venv for Cloud Scraper..."
+        python3 -m venv --system-site-packages /opt/cloud-scraper/venv
+        /opt/cloud-scraper/venv/bin/pip install --no-index \
+            --find-links=/opt/cloud-scraper/vendor \
+            -r /opt/cloud-scraper/requirements.txt
+        echo "Cloud Scraper venv ready."
+        ;;
+esac
+
+#DEBHELPER#
+
+exit 0
