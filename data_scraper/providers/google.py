@@ -41,11 +41,13 @@ class GoogleProvider(BaseProvider):
         self._creds = None
 
     def authenticate(self) -> bool:
+        self.last_error = None
         try:
             from google.oauth2.credentials import Credentials
             from google_auth_oauthlib.flow import InstalledAppFlow
         except ImportError:
-            log.error("google-auth-oauthlib not installed")
+            self.last_error = "google-auth-oauthlib not installed"
+            log.error(self.last_error)
             return False
 
         # Try loading stored token
@@ -70,7 +72,11 @@ class GoogleProvider(BaseProvider):
         # Run OAuth flow
         client_config = self._get_client_config()
         if not client_config:
-            log.error("No Google OAuth client configuration found")
+            self.last_error = (
+                "No OAuth credentials found. Place google-credentials.json "
+                "in ~/.config/data-scraper/"
+            )
+            log.error(self.last_error)
             return False
 
         flow = InstalledAppFlow.from_client_config(client_config, SCOPES)
@@ -81,7 +87,8 @@ class GoogleProvider(BaseProvider):
                 open_browser=True,
             )
         except Exception as e:
-            log.error("OAuth flow failed: %s", e)
+            self.last_error = f"OAuth flow failed: {e}"
+            log.error(self.last_error)
             return False
 
         self._save_creds()

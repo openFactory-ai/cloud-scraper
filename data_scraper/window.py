@@ -184,8 +184,9 @@ class DataScraperWindow(Adw.ApplicationWindow):
         card.refresh()
         card.set_sensitive(True)
         if not success:
-            toast = Adw.Toast(title=f"Failed to connect to {provider.name}")
-            toast.set_timeout(3)
+            reason = getattr(provider, "last_error", None) or "Unknown error"
+            toast = Adw.Toast(title=f"{provider.name}: {reason}")
+            toast.set_timeout(5)
             # Find toast overlay or create one
             self._show_toast(toast)
         return False

@@ -38,6 +38,7 @@ class BaseProvider(ABC):
     def __init__(self):
         self._authenticated = False
         self._user_email: str | None = None
+        self.last_error: str | None = None
 
     @property
     def is_authenticated(self) -> bool:
