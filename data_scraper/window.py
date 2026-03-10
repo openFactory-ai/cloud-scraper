@@ -47,7 +47,7 @@ _CSS = """
 class DataScraperWindow(Adw.ApplicationWindow):
     def __init__(self, **kwargs):
         super().__init__(
-            default_width=520,
+            default_width=720,
             default_height=780,
             title="Cloud Scraper",
             **kwargs,
@@ -95,10 +95,10 @@ class DataScraperWindow(Adw.ApplicationWindow):
 
         content = Gtk.Box(
             orientation=Gtk.Orientation.VERTICAL,
-            spacing=24,
+            spacing=16,
             margin_start=28,
             margin_end=28,
-            margin_top=16,
+            margin_top=12,
             margin_bottom=32,
         )
         scroll.set_child(content)
@@ -113,7 +113,7 @@ class DataScraperWindow(Adw.ApplicationWindow):
             icon_path = Path(__file__).parent.parent / "resources" / "icons" / "cloud-scraper.svg"
         if icon_path.exists():
             icon = Gtk.Image.new_from_file(str(icon_path))
-            icon.set_pixel_size(32)
+            icon.set_pixel_size(48)
             app_header.append(icon)
 
         header_text = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=2)
@@ -133,7 +133,7 @@ class DataScraperWindow(Adw.ApplicationWindow):
         providers_label = Gtk.Label(label="ACCOUNTS")
         providers_label.add_css_class("section-label")
         providers_label.set_xalign(0)
-        providers_label.set_margin_top(4)
+        providers_label.set_margin_top(0)
         content.append(providers_label)
 
         providers_box = Gtk.Box(

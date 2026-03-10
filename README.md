@@ -1,6 +1,13 @@
-# Cloud Scraper
+<p align="center">
+  <img src="resources/icons/cloud-scraper.svg" alt="Cloud Scraper" width="120">
+</p>
 
-Cloud data export GUI — download your personal data from Google, Microsoft, and Apple.
+<h1 align="center">Cloud Scraper</h1>
+
+<p align="center">
+  Cloud data export GUI — download your personal data from Google, Microsoft, and Apple.<br>
+  Built by <a href="https://openfactory.tech">OpenFactory</a>
+</p>
 
 ## Requirements
 
