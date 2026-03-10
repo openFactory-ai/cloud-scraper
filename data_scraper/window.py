@@ -9,7 +9,7 @@ import gi
 gi.require_version("Gtk", "4.0")
 gi.require_version("Adw", "1")
 
-from gi.repository import Gtk, Adw, GLib, Gio
+from gi.repository import Gtk, Adw, GLib, Gio, Gdk
 
 from data_scraper.providers.base import BaseProvider, DataType, ExportProgress
 from data_scraper.providers.google import GoogleProvider
@@ -20,17 +20,49 @@ from data_scraper.widgets.progress_panel import ProgressPanel
 
 log = logging.getLogger(__name__)
 
+_CSS = """
+.cloud-scraper-window {
+    background: @window_bg_color;
+}
+.hero-title {
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.3px;
+}
+.hero-subtitle {
+    font-size: 14px;
+    color: @dim_label_color;
+}
+.export-btn {
+    padding: 12px 48px;
+    font-size: 15px;
+    font-weight: 600;
+    border-radius: 12px;
+}
+.dest-row {
+    border-radius: 12px;
+    padding: 4px 0;
+}
+.section-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: @dim_label_color;
+}
+"""
+
 
 class DataScraperWindow(Adw.ApplicationWindow):
     def __init__(self, **kwargs):
         super().__init__(
-            default_width=600,
-            default_height=720,
-            title="Data Scraper",
+            default_width=520,
+            default_height=780,
+            title="Cloud Scraper",
             **kwargs,
         )
 
-        self._dest_dir = Path.home() / "Downloads" / "export"
+        self._dest_dir = Path.home() / "Downloads" / "cloud-export"
         self._exporting = False
 
         # Providers
@@ -41,15 +73,29 @@ class DataScraperWindow(Adw.ApplicationWindow):
         ]
         self._cards: list[ProviderCard] = []
 
+        self._load_css()
         self._build_ui()
 
-    def _build_ui(self):
-        # Main layout
-        toolbar_view = Adw.ToolbarView()
-        self.set_content(toolbar_view)
+    def _load_css(self):
+        css = Gtk.CssProvider()
+        css.load_from_string(_CSS)
+        Gtk.StyleContext.add_provider_for_display(
+            Gdk.Display.get_default(),
+            css,
+            Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION,
+        )
 
-        # Header bar
+    def _build_ui(self):
+        # Toast overlay wraps everything
+        self._toast_overlay = Adw.ToastOverlay()
+        self.set_content(self._toast_overlay)
+
+        toolbar_view = Adw.ToolbarView()
+        self._toast_overlay.set_child(toolbar_view)
+
+        # Header bar — clean, minimal
         header = Adw.HeaderBar()
+        header.set_title_widget(Gtk.Label())  # empty — title is in the hero
         toolbar_view.add_top_bar(header)
 
         # Scrollable content
@@ -58,22 +104,72 @@ class DataScraperWindow(Adw.ApplicationWindow):
 
         content = Gtk.Box(
             orientation=Gtk.Orientation.VERTICAL,
-            spacing=16,
-            margin_start=24,
-            margin_end=24,
-            margin_top=16,
-            margin_bottom=24,
+            spacing=24,
+            margin_start=28,
+            margin_end=28,
+            margin_top=8,
+            margin_bottom=32,
         )
         scroll.set_child(content)
 
-        # Export destination row
-        dest_group = Adw.PreferencesGroup(title="Export Destination")
+        # -- Hero section --
+        hero = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
+        hero.set_halign(Gtk.Align.CENTER)
+        content.append(hero)
+
+        # App icon
+        icon_path = Path("/opt/openfactory/cloud-scraper/resources/icons/cloud-scraper.svg")
+        if not icon_path.exists():
+            # Dev fallback
+            icon_path = Path(__file__).parent.parent / "resources" / "icons" / "cloud-scraper.svg"
+        if icon_path.exists():
+            icon = Gtk.Image.new_from_file(str(icon_path))
+            icon.set_pixel_size(64)
+            icon.set_margin_bottom(8)
+            hero.append(icon)
+
+        title = Gtk.Label(label="Cloud Scraper")
+        title.add_css_class("hero-title")
+        hero.append(title)
+
+        subtitle = Gtk.Label(label="Export your data from cloud services")
+        subtitle.add_css_class("hero-subtitle")
+        hero.append(subtitle)
+
+        # -- Providers section --
+        providers_label = Gtk.Label(label="ACCOUNTS")
+        providers_label.add_css_class("section-label")
+        providers_label.set_xalign(0)
+        providers_label.set_margin_top(4)
+        content.append(providers_label)
+
+        providers_box = Gtk.Box(
+            orientation=Gtk.Orientation.VERTICAL,
+            spacing=10,
+        )
+        content.append(providers_box)
+
+        for provider in self._providers:
+            card = ProviderCard(provider)
+            card.connect("connect-clicked", self._on_provider_connect, provider, card)
+            card.connect("disconnect-clicked", self._on_provider_disconnect, provider, card)
+            self._cards.append(card)
+            providers_box.append(card)
+
+        # -- Export destination --
+        dest_label = Gtk.Label(label="DESTINATION")
+        dest_label.add_css_class("section-label")
+        dest_label.set_xalign(0)
+        content.append(dest_label)
+
+        dest_group = Adw.PreferencesGroup()
         content.append(dest_group)
 
         dest_row = Adw.ActionRow(
             title="Save to",
             subtitle=str(self._dest_dir),
         )
+        dest_row.add_css_class("dest-row")
         self._dest_subtitle = dest_row
 
         choose_btn = Gtk.Button(icon_name="folder-open-symbolic", valign=Gtk.Align.CENTER)
@@ -82,31 +178,22 @@ class DataScraperWindow(Adw.ApplicationWindow):
         dest_row.add_suffix(choose_btn)
         dest_group.add(dest_row)
 
-        # Provider cards
-        providers_label = Gtk.Label(label="Cloud Providers", xalign=0)
-        providers_label.add_css_class("title-2")
-        providers_label.set_margin_top(8)
-        content.append(providers_label)
-
-        for provider in self._providers:
-            card = ProviderCard(provider)
-            card.connect("connect-clicked", self._on_provider_connect, provider, card)
-            card.connect("disconnect-clicked", self._on_provider_disconnect, provider, card)
-            self._cards.append(card)
-            content.append(card)
-
-        # Progress panel
+        # -- Progress panel (hidden until export starts) --
         self._progress = ProgressPanel()
         content.append(self._progress)
 
-        # Start export button
+        # -- Export button --
+        btn_box = Gtk.Box()
+        btn_box.set_halign(Gtk.Align.CENTER)
+        btn_box.set_margin_top(4)
+        content.append(btn_box)
+
         self._export_btn = Gtk.Button(label="Start Export")
         self._export_btn.add_css_class("suggested-action")
         self._export_btn.add_css_class("pill")
-        self._export_btn.set_halign(Gtk.Align.CENTER)
-        self._export_btn.set_margin_top(8)
+        self._export_btn.add_css_class("export-btn")
         self._export_btn.connect("clicked", self._on_start_export)
-        content.append(self._export_btn)
+        btn_box.append(self._export_btn)
 
     def _on_choose_folder(self, button):
         dialog = Gtk.FileDialog()
@@ -146,10 +233,12 @@ class DataScraperWindow(Adw.ApplicationWindow):
         dialog = Adw.MessageDialog(
             transient_for=self,
             heading="Apple ID Sign In",
-            body="Enter your Apple ID and an app-specific password.\nGenerate one at appleid.apple.com/account/manage",
+            body=(
+                "Enter your Apple ID and an app-specific password.\n"
+                "Generate one at appleid.apple.com → Sign-In and Security → App-Specific Passwords"
+            ),
         )
 
-        # Add input fields
         box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12)
         box.set_margin_start(24)
         box.set_margin_end(24)
@@ -187,31 +276,17 @@ class DataScraperWindow(Adw.ApplicationWindow):
             reason = getattr(provider, "last_error", None) or "Unknown error"
             toast = Adw.Toast(title=f"{provider.name}: {reason}")
             toast.set_timeout(5)
-            # Find toast overlay or create one
-            self._show_toast(toast)
+            self._toast_overlay.add_toast(toast)
         return False
 
     def _on_provider_disconnect(self, card_widget, provider: BaseProvider, card: ProviderCard):
         provider.disconnect()
         card.refresh()
 
-    def _show_toast(self, toast: Adw.Toast):
-        """Show a toast notification. Wraps content in overlay if needed."""
-        # Walk up to find or create a toast overlay
-        content = self.get_content()
-        if isinstance(content, Adw.ToastOverlay):
-            content.add_toast(toast)
-        else:
-            overlay = Adw.ToastOverlay()
-            overlay.set_child(content)
-            self.set_content(overlay)
-            overlay.add_toast(toast)
-
     def _on_start_export(self, button):
         if self._exporting:
             return
 
-        # Gather selected data types per connected provider
         export_plan: list[tuple[BaseProvider, list[DataType]]] = []
         for card in self._cards:
             if card.provider.is_authenticated:
@@ -220,7 +295,9 @@ class DataScraperWindow(Adw.ApplicationWindow):
                     export_plan.append((card.provider, types))
 
         if not export_plan:
-            self._show_toast(Adw.Toast(title="No providers connected or data types selected"))
+            self._toast_overlay.add_toast(
+                Adw.Toast(title="Connect to a provider and select data types first")
+            )
             return
 
         self._exporting = True
@@ -228,15 +305,11 @@ class DataScraperWindow(Adw.ApplicationWindow):
         self._export_btn.set_label("Exporting...")
         self._progress.show_progress()
 
-        # Count total export tasks for progress tracking
         total_types = sum(len(types) for _, types in export_plan)
         completed = [0]
 
         def progress_cb(p: ExportProgress):
-            if p.total > 0:
-                type_progress = p.current / p.total
-            else:
-                type_progress = 0
+            type_progress = p.current / p.total if p.total > 0 else 0
             overall = (completed[0] + type_progress) / total_types
             self._progress.update(overall, p.message)
 
@@ -262,6 +335,8 @@ class DataScraperWindow(Adw.ApplicationWindow):
         self._export_btn.set_sensitive(True)
         self._export_btn.set_label("Start Export")
         count = len(results)
-        self._progress.finish(f"Export complete — {count} data type(s) saved to {self._dest_dir}")
-        self._show_toast(Adw.Toast(title=f"Export complete! {count} data types saved."))
+        self._progress.finish(f"Saved {count} data type(s) to {self._dest_dir}")
+        self._toast_overlay.add_toast(
+            Adw.Toast(title=f"Export complete — {count} data types saved")
+        )
         return False

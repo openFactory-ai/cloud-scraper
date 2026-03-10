@@ -2,7 +2,7 @@
 Name=Cloud Scraper
 Comment=Download your personal data from cloud providers
 Exec=/usr/bin/cloud-scraper
-Icon=preferences-desktop-online-accounts
+Icon=/opt/openfactory/cloud-scraper/resources/icons/cloud-scraper.svg
 Terminal=false
 Type=Application
 Categories=Utility;Network;

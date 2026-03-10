@@ -37,7 +37,7 @@ _EMBEDDED_CLIENT_CONFIG = {
 }
 
 # Config file shipped with the deb package (not in git)
-_SHIPPED_CONFIG_PATH = Path("/opt/cloud-scraper/credentials/google.json")
+_SHIPPED_CONFIG_PATH = Path("/opt/openfactory/cloud-scraper/credentials/google.json")
 
 
 class GoogleProvider(BaseProvider):

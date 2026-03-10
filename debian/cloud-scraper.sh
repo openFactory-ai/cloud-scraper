@@ -1,3 +1,3 @@
 #!/bin/bash
-export PYTHONPATH=/opt/cloud-scraper
-exec /opt/cloud-scraper/venv/bin/python3 -m data_scraper "$@"
+export PYTHONPATH=/opt/openfactory/cloud-scraper
+exec /opt/openfactory/cloud-scraper/venv/bin/python3 -m data_scraper "$@"

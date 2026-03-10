@@ -9,18 +9,18 @@ override_dh_auto_build:
 	# Nothing to build — venv is created at install time (postinst)
 
 override_dh_auto_install:
-	install -d $(CURDIR)/debian/cloud-scraper/opt/cloud-scraper
-	cp -r data_scraper $(CURDIR)/debian/cloud-scraper/opt/cloud-scraper/
-	cp -r resources $(CURDIR)/debian/cloud-scraper/opt/cloud-scraper/
-	cp requirements.txt $(CURDIR)/debian/cloud-scraper/opt/cloud-scraper/
-	cp -r vendor $(CURDIR)/debian/cloud-scraper/opt/cloud-scraper/
+	install -d $(CURDIR)/debian/cloud-scraper/opt/openfactory/cloud-scraper
+	cp -r data_scraper $(CURDIR)/debian/cloud-scraper/opt/openfactory/cloud-scraper/
+	cp -r resources $(CURDIR)/debian/cloud-scraper/opt/openfactory/cloud-scraper/
+	cp requirements.txt $(CURDIR)/debian/cloud-scraper/opt/openfactory/cloud-scraper/
+	cp -r vendor $(CURDIR)/debian/cloud-scraper/opt/openfactory/cloud-scraper/
 
 	# OAuth credentials — local dir (dev builds) or OBS SOURCES dir
-	install -d $(CURDIR)/debian/cloud-scraper/opt/cloud-scraper/credentials
+	install -d $(CURDIR)/debian/cloud-scraper/opt/openfactory/cloud-scraper/credentials
 	for dir in credentials /usr/src/packages/SOURCES; do \
 		for f in $$dir/google.json $$dir/microsoft.json; do \
 			if [ -f "$$f" ]; then \
-				install -m 644 "$$f" $(CURDIR)/debian/cloud-scraper/opt/cloud-scraper/credentials/; \
+				install -m 644 "$$f" $(CURDIR)/debian/cloud-scraper/opt/openfactory/cloud-scraper/credentials/; \
 			fi; \
 		done; \
 	done
