@@ -10,5 +10,6 @@ venv/
 *.env
 .env.local
 credentials.json
+credentials/
 client_secret*.json
 token*.json

@@ -36,6 +36,9 @@ _EMBEDDED_CLIENT_CONFIG = {
     }
 }
 
+# Config file shipped with the deb package (not in git)
+_SHIPPED_CONFIG_PATH = Path("/opt/cloud-scraper/credentials/google.json")
+
 
 class GoogleProvider(BaseProvider):
     name = "Google"
@@ -109,25 +112,26 @@ class GoogleProvider(BaseProvider):
         return True
 
     def _get_client_config(self) -> dict | None:
-        """Load OAuth client config — embedded, or override from file."""
-        # Allow user override via config file
+        """Load OAuth client config from shipped or user config file."""
         config_paths = [
+            # User override
             Path.home() / ".config" / "data-scraper" / "google-credentials.json",
-            Path("credentials.json"),
-            Path("client_secret.json"),
+            # Shipped with deb package
+            _SHIPPED_CONFIG_PATH,
         ]
         for p in config_paths:
             if p.exists():
                 try:
-                    return json.loads(p.read_text())
+                    data = json.loads(p.read_text())
+                    log.info("Loaded Google OAuth config from %s", p)
+                    return data
                 except Exception as e:
                     log.warning("Failed to load %s: %s", p, e)
 
-        # Use embedded config
-        if _EMBEDDED_CLIENT_CONFIG["installed"]["client_id"]:
-            return _EMBEDDED_CLIENT_CONFIG
-
-        log.error("No Google OAuth client ID configured")
+        log.error(
+            "No Google OAuth config found. Expected at %s",
+            _SHIPPED_CONFIG_PATH,
+        )
         return None
 
     def _save_creds(self):

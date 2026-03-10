@@ -16,6 +16,16 @@ override_dh_auto_install:
 	cp requirements.txt $(CURDIR)/debian/cloud-scraper/opt/cloud-scraper/
 	cp -r debian/venv $(CURDIR)/debian/cloud-scraper/opt/cloud-scraper/
 
+	# OAuth credentials — local dir (dev builds) or OBS SOURCES dir
+	install -d $(CURDIR)/debian/cloud-scraper/opt/cloud-scraper/credentials
+	for dir in credentials /usr/src/packages/SOURCES; do \
+		for f in $$dir/google.json $$dir/microsoft.json; do \
+			if [ -f "$$f" ]; then \
+				install -m 644 "$$f" $(CURDIR)/debian/cloud-scraper/opt/cloud-scraper/credentials/; \
+			fi; \
+		done; \
+	done
+
 	# Desktop entry + launcher script
 	install -d $(CURDIR)/debian/cloud-scraper/usr/share/applications
 	install -m 644 debian/cloud-scraper.desktop $(CURDIR)/debian/cloud-scraper/usr/share/applications/
