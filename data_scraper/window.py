@@ -307,24 +307,29 @@ class DataScraperWindow(Adw.ApplicationWindow):
         completed = [0]
 
         def progress_cb(p: ExportProgress):
-            type_progress = p.current / p.total if p.total > 0 else 0
-            overall = (completed[0] + type_progress) / total_types
-            self._progress.update(overall, p.message)
+            try:
+                type_progress = p.current / p.total if p.total > 0 else 0
+                overall = (completed[0] + type_progress) / total_types
+                self._progress.update(overall, p.message)
+            except Exception:
+                pass
 
         def export_thread():
-            self._dest_dir.mkdir(parents=True, exist_ok=True)
             all_results = {}
-
-            for provider, data_types in export_plan:
-                for dt in data_types:
-                    try:
-                        results = provider.export_data([dt], self._dest_dir, progress_cb)
-                        all_results.update(results)
-                    except Exception as e:
-                        log.error("Export failed for %s/%s: %s", provider.name, dt.value, e)
-                    completed[0] += 1
-
-            GLib.idle_add(self._on_export_done, all_results)
+            try:
+                self._dest_dir.mkdir(parents=True, exist_ok=True)
+                for provider, data_types in export_plan:
+                    for dt in data_types:
+                        try:
+                            results = provider.export_data([dt], self._dest_dir, progress_cb)
+                            all_results.update(results)
+                        except Exception as e:
+                            log.error("Export failed for %s/%s: %s", provider.name, dt.value, e)
+                        completed[0] += 1
+            except Exception as e:
+                log.error("Export thread crashed: %s", e)
+            finally:
+                GLib.idle_add(self._on_export_done, all_results)
 
         threading.Thread(target=export_thread, daemon=True).start()
 

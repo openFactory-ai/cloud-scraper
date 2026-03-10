@@ -274,8 +274,10 @@ class MicrosoftProvider(BaseProvider):
             download_url = f.get("@microsoft.graph.downloadUrl")
             if download_url:
                 try:
-                    content = self._graph_get_bytes(download_url)
-                    (out_dir / fname).write_bytes(content)
+                    import requests
+                    r = requests.get(download_url, timeout=60)
+                    r.raise_for_status()
+                    (out_dir / fname).write_bytes(r.content)
                 except Exception as e:
                     log.warning("Failed to download %s: %s", fname, e)
 
