@@ -9,6 +9,8 @@
   Built by <a href="https://openfactory.tech">OpenFactory</a>
 </p>
 
+![Cloud Scraper screenshot](docs/screenshot.png)
+
 ## Features
 
 - **Google** — Gmail, Contacts, Calendar, Drive, Photos
