@@ -102,6 +102,12 @@ sudo apt install python3-gi python3-gi-cairo gir1.2-gtk-4.0 gir1.2-adw-1 python3
 sudo dnf install gtk4-devel libadwaita-devel python3-gobject
 ```
 
+## Architecture
+
+Cloud Scraper is part of the [OpenFactory](https://openfactory.tech) data sovereignty stack. It sits between your local infrastructure and corporate cloud providers, pulling your data out so it lives on hardware you control.
+
+![Data Sovereignty Architecture](docs/architecture.svg)
+
 ## License
 
 [AGPL-3.0](LICENSE)

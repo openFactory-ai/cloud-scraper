@@ -1,0 +1,209 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700" font-family="Inter, -apple-system, system-ui, sans-serif">
+  <defs>
+    <filter id="shadow" x="-4%" y="-4%" width="108%" height="108%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.1"/>
+    </filter>
+    <linearGradient id="leftGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#e8f5e9"/>
+      <stop offset="100%" stop-color="#c8e6c9"/>
+    </linearGradient>
+    <linearGradient id="midGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fff3e0"/>
+      <stop offset="100%" stop-color="#ffe0b2"/>
+    </linearGradient>
+    <linearGradient id="rightGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#e3f2fd"/>
+      <stop offset="100%" stop-color="#bbdefb"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="700" fill="#fafafa" rx="12"/>
+
+  <!-- Title -->
+  <text x="600" y="40" text-anchor="middle" font-size="22" font-weight="700" fill="#212121">Data Sovereignty Architecture</text>
+  <text x="600" y="62" text-anchor="middle" font-size="13" fill="#757575">How OpenFactory + Cloud Scraper sit between your infrastructure and corporate clouds</text>
+
+  <!-- ============================================ -->
+  <!-- LEFT ZONE: Your Network -->
+  <!-- ============================================ -->
+  <rect x="30" y="85" width="320" height="580" rx="16" fill="url(#leftGrad)" stroke="#66bb6a" stroke-width="1.5" opacity="0.7"/>
+  <text x="190" y="115" text-anchor="middle" font-size="15" font-weight="700" fill="#2e7d32">YOUR NETWORK</text>
+  <text x="190" y="133" text-anchor="middle" font-size="11" fill="#558b2f">You own &amp; control everything here</text>
+
+  <!-- Home Lab -->
+  <rect x="55" y="152" width="270" height="100" rx="10" fill="#fff" filter="url(#shadow)"/>
+  <text x="70" y="175" font-size="13" font-weight="600" fill="#333">Home Lab / Servers</text>
+  <text x="70" y="195" font-size="11" fill="#666">Bare metal &amp; VM fleet</text>
+  <text x="70" y="212" font-size="11" fill="#666">Custom Linux OS images</text>
+  <text x="70" y="229" font-size="11" fill="#666">libvirt / KVM hypervisor</text>
+  <text x="70" y="246" font-size="11" fill="#666">Local storage &amp; backups</text>
+
+  <!-- Personal Devices -->
+  <rect x="55" y="268" width="270" height="80" rx="10" fill="#fff" filter="url(#shadow)"/>
+  <text x="70" y="293" font-size="13" font-weight="600" fill="#333">Personal Devices</text>
+  <text x="70" y="313" font-size="11" fill="#666">Laptops, desktops, workstations</text>
+  <text x="70" y="330" font-size="11" fill="#666">Running custom OpenFactory OS</text>
+
+  <!-- Managed Network -->
+  <rect x="55" y="364" width="270" height="80" rx="10" fill="#fff" filter="url(#shadow)"/>
+  <text x="70" y="389" font-size="13" font-weight="600" fill="#333">Managed Network</text>
+  <text x="70" y="409" font-size="11" fill="#666">VPN mesh (WireGuard / vplane)</text>
+  <text x="70" y="426" font-size="11" fill="#666">Edge devices, IoT, drones</text>
+
+  <!-- Local Data Store -->
+  <rect x="55" y="460" width="270" height="80" rx="10" fill="#fff" filter="url(#shadow)"/>
+  <text x="70" y="485" font-size="13" font-weight="600" fill="#333">Local Data Store</text>
+  <text x="70" y="505" font-size="11" fill="#666">Exported cloud data (email, files, photos)</text>
+  <text x="70" y="522" font-size="11" fill="#666">No third-party access</text>
+
+  <!-- Elster OS badge -->
+  <rect x="55" y="556" width="270" height="50" rx="10" fill="#fff" filter="url(#shadow)"/>
+  <text x="70" y="578" font-size="13" font-weight="600" fill="#333">Elster OS / Custom Distros</text>
+  <text x="70" y="595" font-size="11" fill="#666">Built by OpenFactory, deployed to fleet</text>
+
+  <!-- ============================================ -->
+  <!-- MIDDLE ZONE: Sovereignty Layer -->
+  <!-- ============================================ -->
+  <rect x="390" y="85" width="420" height="580" rx="16" fill="url(#midGrad)" stroke="#ff9800" stroke-width="1.5" opacity="0.7"/>
+  <text x="600" y="115" text-anchor="middle" font-size="15" font-weight="700" fill="#e65100">SOVEREIGNTY LAYER</text>
+  <text x="600" y="133" text-anchor="middle" font-size="11" fill="#bf360c">Your tools, your rules — no vendor lock-in</text>
+
+  <!-- OpenFactory -->
+  <rect x="415" y="152" width="370" height="210" rx="12" fill="#fff" filter="url(#shadow)" stroke="#ff9800" stroke-width="1"/>
+  <circle cx="440" cy="178" r="12" fill="#ff9800"/>
+  <text x="440" y="183" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">O</text>
+  <text x="460" y="183" font-size="16" font-weight="700" fill="#e65100">OpenFactory</text>
+  <text x="430" y="208" font-size="11" fill="#666">Build custom Linux OS images from scratch</text>
+  <text x="430" y="228" font-size="11" fill="#666">Deploy &amp; manage device fleets remotely</text>
+  <text x="430" y="248" font-size="11" fill="#666">AI-powered build configuration</text>
+  <text x="430" y="268" font-size="11" fill="#666">Automated testing &amp; verification</text>
+  <text x="430" y="288" font-size="11" fill="#666">OBS package building (RPM/DEB)</text>
+  <text x="430" y="308" font-size="11" fill="#666">Age verification compliance (AB 1043)</text>
+  <line x1="430" y1="320" x2="770" y2="320" stroke="#ffe0b2" stroke-width="1"/>
+  <text x="430" y="340" font-size="10" fill="#999">openfactory.tech · console.openfactory.tech</text>
+
+  <!-- Cloud Scraper -->
+  <rect x="415" y="385" width="370" height="180" rx="12" fill="#fff" filter="url(#shadow)" stroke="#ff9800" stroke-width="1"/>
+  <circle cx="440" cy="412" r="12" fill="#7b1fa2"/>
+  <text x="440" y="417" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">C</text>
+  <text x="460" y="417" font-size="16" font-weight="700" fill="#7b1fa2">Cloud Scraper</text>
+  <text x="430" y="442" font-size="11" fill="#666">Export personal data from cloud providers</text>
+  <text x="430" y="462" font-size="11" fill="#666">Email, contacts, calendar, files, photos</text>
+  <text x="430" y="482" font-size="11" fill="#666">Data goes straight to local disk</text>
+  <text x="430" y="502" font-size="11" fill="#666">No intermediary servers</text>
+  <text x="430" y="522" font-size="11" fill="#666">OAuth2 — read-only access</text>
+  <line x1="430" y1="534" x2="770" y2="534" stroke="#ffe0b2" stroke-width="1"/>
+  <text x="430" y="552" font-size="10" fill="#999">GTK4 desktop app · runs on your machine</text>
+
+  <!-- ============================================ -->
+  <!-- RIGHT ZONE: Corporate Clouds -->
+  <!-- ============================================ -->
+  <rect x="850" y="85" width="320" height="580" rx="16" fill="url(#rightGrad)" stroke="#42a5f5" stroke-width="1.5" opacity="0.7"/>
+  <text x="1010" y="115" text-anchor="middle" font-size="15" font-weight="700" fill="#1565c0">CORPORATE CLOUDS</text>
+  <text x="1010" y="133" text-anchor="middle" font-size="11" fill="#1976d2">They control access, pricing &amp; your data</text>
+
+  <!-- Google -->
+  <rect x="875" y="152" width="270" height="100" rx="10" fill="#fff" filter="url(#shadow)"/>
+  <text x="890" y="175" font-size="13" font-weight="700" fill="#4285f4">Google</text>
+  <text x="890" y="195" font-size="11" fill="#666">Gmail · Drive · Photos · Calendar</text>
+  <text x="890" y="212" font-size="11" fill="#666">Contacts · Google Cloud (GCE)</text>
+  <text x="890" y="229" font-size="11" fill="#666">YouTube · Maps data</text>
+  <text x="890" y="246" font-size="11" fill="#999">→ Cloud Scraper exports via API</text>
+
+  <!-- Microsoft -->
+  <rect x="875" y="268" width="270" height="100" rx="10" fill="#fff" filter="url(#shadow)"/>
+  <text x="890" y="293" font-size="13" font-weight="700" fill="#00a4ef">Microsoft</text>
+  <text x="890" y="313" font-size="11" fill="#666">Outlook · OneDrive · Azure AD</text>
+  <text x="890" y="330" font-size="11" fill="#666">Teams · Azure Cloud (VMs, AKS)</text>
+  <text x="890" y="347" font-size="11" fill="#666">Microsoft 365 suite</text>
+  <text x="890" y="362" font-size="11" fill="#999">→ Cloud Scraper exports via Graph API</text>
+
+  <!-- Apple -->
+  <rect x="875" y="384" width="270" height="80" rx="10" fill="#fff" filter="url(#shadow)"/>
+  <text x="890" y="409" font-size="13" font-weight="700" fill="#555">Apple</text>
+  <text x="890" y="429" font-size="11" fill="#666">iCloud Drive · Contacts · Calendar</text>
+  <text x="890" y="446" font-size="11" fill="#999">→ Cloud Scraper exports via CalDAV/CardDAV</text>
+
+  <!-- AWS -->
+  <rect x="875" y="480" width="270" height="80" rx="10" fill="#fff" filter="url(#shadow)"/>
+  <text x="890" y="505" font-size="13" font-weight="700" fill="#ff9900">AWS</text>
+  <text x="890" y="525" font-size="11" fill="#666">EC2 · S3 · App Runner · VPC</text>
+  <text x="890" y="542" font-size="11" fill="#999">→ OpenFactory uses for hosting &amp; CDN</text>
+
+  <!-- Other SaaS -->
+  <rect x="875" y="576" width="270" height="60" rx="10" fill="#fff" filter="url(#shadow)"/>
+  <text x="890" y="601" font-size="13" font-weight="700" fill="#666">Other SaaS</text>
+  <text x="890" y="618" font-size="11" fill="#666">GitHub · Slack · ServiceNow · ...</text>
+
+  <!-- ============================================ -->
+  <!-- ARROWS: Left ↔ Middle -->
+  <!-- ============================================ -->
+
+  <!-- OpenFactory → Home Lab (deploys OS images) -->
+  <line x1="415" y1="220" x2="325" y2="200" stroke="#e65100" stroke-width="2" marker-end="url(#arrowOrange)"/>
+  <text x="355" y="195" font-size="9" fill="#e65100" text-anchor="middle" transform="rotate(-8, 355, 195)">deploys OS</text>
+
+  <!-- OpenFactory → Devices -->
+  <line x1="415" y1="270" x2="325" y2="305" stroke="#e65100" stroke-width="2" marker-end="url(#arrowOrange)"/>
+  <text x="358" y="298" font-size="9" fill="#e65100" text-anchor="middle" transform="rotate(12, 358, 298)">fleet mgmt</text>
+
+  <!-- OpenFactory → Managed Network -->
+  <line x1="415" y1="310" x2="325" y2="395" stroke="#e65100" stroke-width="2" marker-end="url(#arrowOrange)"/>
+  <text x="352" y="365" font-size="9" fill="#e65100" text-anchor="middle" transform="rotate(24, 352, 365)">provisions</text>
+
+  <!-- Cloud Scraper → Local Data -->
+  <line x1="415" y1="480" x2="325" y2="495" stroke="#7b1fa2" stroke-width="2" marker-end="url(#arrowPurple)"/>
+  <text x="362" y="478" font-size="9" fill="#7b1fa2" text-anchor="middle">saves to disk</text>
+
+  <!-- ============================================ -->
+  <!-- ARROWS: Middle ↔ Right -->
+  <!-- ============================================ -->
+
+  <!-- Cloud Scraper → Google -->
+  <line x1="785" y1="420" x2="875" y2="220" stroke="#7b1fa2" stroke-width="1.5" stroke-dasharray="6,3"/>
+  <line x1="875" y1="220" x2="875" y2="220" stroke="#7b1fa2" stroke-width="1.5"/>
+
+  <!-- Cloud Scraper → Microsoft -->
+  <line x1="785" y1="450" x2="875" y2="330" stroke="#7b1fa2" stroke-width="1.5" stroke-dasharray="6,3"/>
+
+  <!-- Cloud Scraper → Apple -->
+  <line x1="785" y1="470" x2="875" y2="425" stroke="#7b1fa2" stroke-width="1.5" stroke-dasharray="6,3"/>
+
+  <!-- OpenFactory → AWS -->
+  <line x1="785" y1="300" x2="875" y2="510" stroke="#e65100" stroke-width="1.5" stroke-dasharray="6,3"/>
+
+  <!-- Arrow markers -->
+  <defs>
+    <marker id="arrowOrange" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#e65100"/>
+    </marker>
+    <marker id="arrowPurple" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#7b1fa2"/>
+    </marker>
+  </defs>
+
+  <!-- ============================================ -->
+  <!-- DATA FLOW LABELS on dashed lines -->
+  <!-- ============================================ -->
+  <rect x="808" y="295" width="55" height="16" rx="3" fill="#fff" stroke="#7b1fa2" stroke-width="0.5"/>
+  <text x="835" y="306" text-anchor="middle" font-size="8" fill="#7b1fa2">OAuth2</text>
+
+  <rect x="808" y="375" width="55" height="16" rx="3" fill="#fff" stroke="#7b1fa2" stroke-width="0.5"/>
+  <text x="835" y="386" text-anchor="middle" font-size="8" fill="#7b1fa2">read-only</text>
+
+  <rect x="808" y="438" width="55" height="16" rx="3" fill="#fff" stroke="#7b1fa2" stroke-width="0.5"/>
+  <text x="835" y="449" text-anchor="middle" font-size="8" fill="#7b1fa2">CalDAV</text>
+
+  <rect x="808" y="480" width="55" height="16" rx="3" fill="#fff" stroke="#e65100" stroke-width="0.5"/>
+  <text x="835" y="491" text-anchor="middle" font-size="8" fill="#e65100">VPC</text>
+
+  <!-- ============================================ -->
+  <!-- KEY INSIGHT at bottom -->
+  <!-- ============================================ -->
+  <rect x="390" y="582" width="420" height="70" rx="10" fill="#fff8e1" stroke="#ffb300" stroke-width="1"/>
+  <text x="600" y="603" text-anchor="middle" font-size="12" font-weight="600" fill="#e65100">The Pattern</text>
+  <text x="600" y="620" text-anchor="middle" font-size="11" fill="#555">Cloud Scraper pulls your data OUT of corporate clouds.</text>
+  <text x="600" y="637" text-anchor="middle" font-size="11" fill="#555">OpenFactory builds the OS to run it all ON YOUR terms.</text>
+
+</svg>
