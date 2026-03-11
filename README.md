@@ -104,7 +104,25 @@ sudo dnf install gtk4-devel libadwaita-devel python3-gobject
 
 ## Architecture
 
-Cloud Scraper is part of the [OpenFactory](https://openfactory.tech) data sovereignty stack. It sits between your local infrastructure and corporate cloud providers, pulling your data out so it lives on hardware you control.
+Cloud Scraper is part of the [OpenFactory](https://openfactory.tech) data sovereignty stack.
+
+```
+YOUR NETWORK              SOVEREIGNTY LAYER              CORPORATE CLOUDS
+(you own this)            (your tools)                   (they control this)
+
+ Home Lab / Servers   <── OpenFactory ──────────────>   AWS (hosting/CDN)
+ Personal Devices     <──   Build OS images             Google Cloud
+ Managed Network      <──   Deploy to fleet             Azure
+ Local Data Store     <──   Compliance engine
+                                                         Google (Gmail, Drive,
+ Deployed OS Images   <── Cloud Scraper ─ ─ ─ ─ ─ ─>     Photos, Calendar)
+   Debian, Ubuntu,        Export personal data           Microsoft (Outlook,
+   Fedora, openSUSE,      OAuth2 read-only                OneDrive, Teams)
+   Elster OS              No intermediary servers        Apple (iCloud, Photos)
+                          Saves straight to disk         Other SaaS
+```
+
+**OpenFactory** builds custom Linux OS images and deploys them to your hardware. **Cloud Scraper** pulls your personal data out of corporate clouds onto that hardware. Together they form a complete sovereign computing stack — your machines, your OS, your data, no corporate dependency.
 
 ![Data Sovereignty Architecture](docs/architecture.svg)
 
