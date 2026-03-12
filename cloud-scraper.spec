@@ -13,6 +13,8 @@ Requires:       python3-gobject
 Requires:       gtk4
 Requires:       libadwaita
 Requires:       python3-systemd
+Requires:       squashfs-tools
+Requires:       xorriso
 
 BuildRequires:  python3-devel
 
@@ -34,6 +36,9 @@ cp -r data_scraper %{buildroot}/opt/openfactory/cloud-scraper/
 cp -r resources %{buildroot}/opt/openfactory/cloud-scraper/
 cp requirements.txt %{buildroot}/opt/openfactory/cloud-scraper/
 cp -r vendor %{buildroot}/opt/openfactory/cloud-scraper/
+
+# Privileged ISO helper script
+install -m 755 data_scraper/iso_helper.sh %{buildroot}/opt/openfactory/cloud-scraper/iso-helper.sh
 
 # OAuth credentials — local dir (dev builds) or OBS SOURCES dir
 install -d %{buildroot}/opt/openfactory/cloud-scraper/credentials

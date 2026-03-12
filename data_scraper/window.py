@@ -15,8 +15,10 @@ from data_scraper.providers.base import BaseProvider, DataType, ExportProgress
 from data_scraper.providers.google import GoogleProvider
 from data_scraper.providers.microsoft import MicrosoftProvider
 from data_scraper.providers.apple import AppleProvider
+from data_scraper.iso_builder import IsoBuilder
 from data_scraper.widgets.provider_card import ProviderCard
 from data_scraper.widgets.progress_panel import ProgressPanel
+from data_scraper.widgets.iso_dialog import IsoDialog
 
 log = logging.getLogger(__name__)
 
@@ -41,6 +43,12 @@ _CSS = """
     text-transform: uppercase;
     color: @dim_label_color;
 }
+.flash-btn {
+    padding: 10px 36px;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 12px;
+}
 """
 
 
@@ -55,6 +63,7 @@ class DataScraperWindow(Adw.ApplicationWindow):
 
         self._dest_dir = Path.home() / "Downloads" / "cloud-export"
         self._exporting = False
+        self._flashing = False
 
         # Providers
         self._providers: list[BaseProvider] = [
@@ -188,6 +197,24 @@ class DataScraperWindow(Adw.ApplicationWindow):
         self._export_btn.connect("clicked", self._on_start_export)
         btn_box.append(self._export_btn)
 
+        # -- Flash to ISO button --
+        flash_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
+        flash_box.set_halign(Gtk.Align.CENTER)
+        flash_box.set_margin_top(8)
+        content.append(flash_box)
+
+        self._flash_btn = Gtk.Button(label="Flash to ISO")
+        self._flash_btn.add_css_class("pill")
+        self._flash_btn.add_css_class("flash-btn")
+        self._flash_btn.set_icon_name("media-optical-symbolic")
+        self._flash_btn.connect("clicked", self._on_flash_to_iso)
+        flash_box.append(self._flash_btn)
+
+        flash_hint = Gtk.Label(label="Bake exported data into a bootable ISO")
+        flash_hint.add_css_class("dim-label")
+        flash_hint.add_css_class("caption")
+        flash_box.append(flash_hint)
+
     def _on_choose_folder(self, button):
         dialog = Gtk.FileDialog()
         dialog.set_title("Choose Export Folder")
@@ -281,8 +308,109 @@ class DataScraperWindow(Adw.ApplicationWindow):
         provider.disconnect()
         card.refresh()
 
+    def _on_flash_to_iso(self, button):
+        """Handle Flash to ISO button click."""
+        if self._flashing or self._exporting:
+            return
+
+        # Check that export dir has files
+        if not self._dest_dir.is_dir() or not any(self._dest_dir.iterdir()):
+            self._toast_overlay.add_toast(
+                Adw.Toast(title="Export some data first before flashing to ISO")
+            )
+            return
+
+        builder = IsoBuilder(self._dest_dir, self._flash_progress_cb)
+        env = builder.detect_live_environment()
+
+        if env.is_live and env.mount_point:
+            # Live CD mode — use the source medium, ask for output path
+            self._start_flash_save_dialog(builder, env)
+        else:
+            # Not a live CD — show ISO picker dialog
+            iso_dialog = IsoDialog(self)
+
+            def on_iso_selected(path):
+                if path:
+                    self._start_flash_save_dialog(builder, env, source_iso=path)
+
+            iso_dialog.present(on_iso_selected)
+
+    def _start_flash_save_dialog(self, builder, env, source_iso=None):
+        """Show a save dialog for the output ISO, then start the build."""
+        dialog = Gtk.FileDialog()
+        dialog.set_title("Save ISO As")
+        dialog.set_initial_name("cloud-export.iso")
+
+        try:
+            downloads = Gio.File.new_for_path(str(Path.home() / "Downloads"))
+            dialog.set_initial_folder(downloads)
+        except Exception:
+            pass
+
+        def on_save_response(d, result):
+            try:
+                gfile = d.save_finish(result)
+                if gfile:
+                    output_path = Path(gfile.get_path())
+                    self._run_flash_build(builder, env, source_iso, output_path)
+            except Exception:
+                pass  # User cancelled
+
+        dialog.save(self, None, on_save_response)
+
+    def _run_flash_build(self, builder, env, source_iso, output_path):
+        """Start the ISO build in a background thread."""
+        self._flashing = True
+        self._flash_btn.set_sensitive(False)
+        self._flash_btn.set_label("Building ISO...")
+        self._export_btn.set_sensitive(False)
+        self._progress.show_progress()
+
+        def build_thread():
+            try:
+                if source_iso:
+                    # User-provided ISO
+                    actual_source = source_iso
+                else:
+                    # Live CD — copy from medium
+                    import tempfile
+                    work = Path(tempfile.mkdtemp(prefix="cloud-iso-live-"))
+                    actual_source = builder.copy_live_iso(env, work)
+
+                builder.build_iso(actual_source, output_path)
+                GLib.idle_add(self._on_flash_done, True, output_path, None)
+            except Exception as e:
+                log.error("Flash to ISO failed: %s", e)
+                GLib.idle_add(self._on_flash_done, False, output_path, str(e))
+
+        threading.Thread(target=build_thread, daemon=True).start()
+
+    def _flash_progress_cb(self, fraction, message):
+        """Progress callback for IsoBuilder — thread-safe."""
+        self._progress.update(fraction, message)
+
+    def _on_flash_done(self, success, output_path, error):
+        """Called on main thread when ISO build completes."""
+        self._flashing = False
+        self._flash_btn.set_sensitive(True)
+        self._flash_btn.set_label("Flash to ISO")
+        self._export_btn.set_sensitive(True)
+
+        if success:
+            self._progress.finish(f"ISO created: {output_path}")
+            self._toast_overlay.add_toast(
+                Adw.Toast(title=f"ISO saved to {output_path.name}")
+            )
+        else:
+            self._progress.finish(f"Failed: {error}")
+            self._toast_overlay.add_toast(
+                Adw.Toast(title=f"ISO build failed: {error}")
+            )
+        return False
+
     def _on_start_export(self, button):
-        if self._exporting:
+        if self._exporting or self._flashing:
             return
 
         export_plan: list[tuple[BaseProvider, list[DataType]]] = []
@@ -301,6 +429,7 @@ class DataScraperWindow(Adw.ApplicationWindow):
         self._exporting = True
         self._export_btn.set_sensitive(False)
         self._export_btn.set_label("Exporting...")
+        self._flash_btn.set_sensitive(False)
         self._progress.show_progress()
 
         total_types = sum(len(types) for _, types in export_plan)
@@ -337,6 +466,7 @@ class DataScraperWindow(Adw.ApplicationWindow):
         self._exporting = False
         self._export_btn.set_sensitive(True)
         self._export_btn.set_label("Start Export")
+        self._flash_btn.set_sensitive(True)
         count = len(results)
         self._progress.finish(f"Saved {count} data type(s) to {self._dest_dir}")
         self._toast_overlay.add_toast(

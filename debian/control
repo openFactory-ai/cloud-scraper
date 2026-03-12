@@ -8,7 +8,7 @@ Homepage: https://github.com/openFactory-ai/cloud-scraper
 
 Package: cloud-scraper
 Architecture: all
-Depends: ${misc:Depends}, python3 (>= 3.9), python3-venv, python3-pip, python3-gi, gir1.2-gtk-4.0, gir1.2-adw-1, python3-systemd
+Depends: ${misc:Depends}, python3 (>= 3.9), python3-venv, python3-pip, python3-gi, gir1.2-gtk-4.0, gir1.2-adw-1, python3-systemd, squashfs-tools, xorriso
 Description: Cloud data export GUI
  Download your personal data from Google, Microsoft, and Apple
  using official export APIs. Supports email, contacts, calendar,
